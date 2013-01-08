@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, NetAAppActivity!</string>
+    <string name="app_name">NetAApp</string>
+    <string name="input_hint">http://google.com</string>
+    <string name="btn_go">Get</string>
+    <string name="btn_post">Post</string>
+
+</resources>
