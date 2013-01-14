@@ -16,11 +16,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.os.Handler;
 import android.os.Message;
-//used for connectivity
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,7 +54,6 @@ public class NetAppActivity extends Activity {
 	String _urlapi_login, _fetchurl, _htmlbuf;
 	final String _cookie_sess = "_check_app_session", _cookie_token = "remember_token";
 	public String _cookie, _token, _csrf, _useragent;
-	
 	
     /** Called when the activity is first created. */
     @Override

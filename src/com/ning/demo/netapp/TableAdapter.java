@@ -99,6 +99,7 @@ public class TableAdapter extends BaseAdapter {
     			sess_data.putString("sess", ((NetAppActivity)context)._cookie);
     			sess_data.putString("token", ((NetAppActivity)context)._token);
     			sess_data.putString("csrf", ((NetAppActivity)context)._csrf);
+				sess_data.putString("useragent", ((NetAppActivity)context)._useragent);
     			sess_data.putString("url", _url);
     			Intent yunjianIntent = new Intent(_context, NetAppActivity.class);
     			yunjianIntent.putExtras(sess_data);
