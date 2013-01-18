@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;  
 import android.content.Context;  
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;  
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -72,7 +73,7 @@ public class TableAdapter extends BaseAdapter {
                 } else if (tableCell.type == TableCell.IMAGE) {//如果格单元是图像内容  
                     ImageView imgCell = new ImageView(context);  
                     imgCell.setBackgroundColor(Color.BLACK);//背景黑色  
-                    imgCell.setImageResource((Integer) tableCell.value);  
+                    imgCell.setImageBitmap((Bitmap) tableCell.value);
                     addView(imgCell, layoutParams);  
                 } else if (tableCell.type == TableCell.BUTTON) {
                 	Button btncell = new Button(context);

@@ -1,6 +1,8 @@
 package com.ning.demo.netapp;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 //used for interacting with user interface
 import android.widget.AdapterView;
@@ -16,7 +18,12 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.os.Handler;
 import android.os.Message;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -329,7 +336,7 @@ public class NetAppActivity extends Activity {
                 while ( mmm.find() ) {
                 	String item = mmm.group(1);
                 	String tag = "";
-                	Pattern pp1 = Pattern.compile("^[ \t\r\n]*<([^<>]+)>[\r\n]*([^<>\r\n]+)[\r\n]*");
+                	Pattern pp1 = Pattern.compile("^[ \t\r\n]*<([^<>]+)>[\r\n]*([^<>\r\n]*)[\r\n]*");
                 	Matcher mm1 = pp1.matcher(item);
                 	if ( mm1.find() ) {
                 		item = mm1.group(2);
@@ -342,10 +349,30 @@ public class NetAppActivity extends Activity {
                 		item = mm3.group(1);
                 	}
                 	Pattern pp2 = Pattern.compile("^a href=\"([^\"]+)\"");
+                	Pattern pp4 = Pattern.compile("^img src=\"([^\"]+)\"");
                 	Matcher mm2 = pp2.matcher(tag);
+                	Matcher mm4 = pp4.matcher(tag);
+                	
                 	if ( mm2.find() ) {
                 		tc_lst.add(new TableCell(item, width, LayoutParams.MATCH_PARENT, TableCell.BUTTON, 
                 				"http://www.365check.net"+mm2.group(1)));
+                	} else if ( mm4.find() ) {
+                		Bitmap bitmap = null;
+                		try {
+                			URL myImgUrl = new URL("http://www.365check.net"+mm4.group(1));
+                			HttpURLConnection conn = (HttpURLConnection)myImgUrl.openConnection();   
+                			conn.setDoInput(true);   
+                			conn.connect();   
+                			InputStream is = conn.getInputStream();   
+           					bitmap = BitmapFactory.decodeStream(is);   
+                			is.close();
+                			
+                			tc_lst.add(new TableCell(bitmap, width, LayoutParams.MATCH_PARENT, TableCell.IMAGE));
+                		} catch (IOException e) {   
+                			//e.printStackTrace();
+                			tc_lst.add(new TableCell(item, width, LayoutParams.MATCH_PARENT, TableCell.STRING));
+                		}
+                		
                 	} else {
                 		tc_lst.add(new TableCell(item, width, LayoutParams.MATCH_PARENT, TableCell.STRING));
                 	}
