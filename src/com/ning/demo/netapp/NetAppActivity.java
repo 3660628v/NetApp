@@ -54,8 +54,8 @@ public class NetAppActivity extends Activity {
 	ArrayList<String> _buf;
 	InputStreamReader _ins;
 	ProgressBar _bar;
-	ListView _lv;
-	ArrayList<TableRow> _tab;
+	ListView _lv, _lvBtn;
+	ArrayList<TableRow> _tab, _tabBtn;
 	//TableCell[] _titles;
 	int _width;
 	String _urlapi_login, _fetchurl, _htmlbuf;
@@ -68,7 +68,7 @@ public class NetAppActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        _etext = (EditText)findViewById(R.id.address);
+        //_etext = (EditText)findViewById(R.id.address);
         _content = (TextView)findViewById(R.id.pagetext);
         _info = (TextView)findViewById(R.id.debuginfo);
         _btn_go = (Button)findViewById(R.id.ButtonGo);
@@ -76,7 +76,11 @@ public class NetAppActivity extends Activity {
         _buf = new ArrayList<String>();
         _bar = (ProgressBar)findViewById(R.id.progressBar1);
         _lv = (ListView)findViewById(R.id.ListView01);
-        _tab = new ArrayList<TableRow>();
+        _lvBtn = (ListView)findViewById(R.id.ListView_btn);
+        _tab = _tabBtn = null;
+        //_tab = new ArrayList<TableRow>();
+        //_tabBtn = new ArrayList<TableRow>();
+        
         //_titles = new TableCell[3];
         
         //_titles[0] = new TableCell( "编号", _width, LayoutParams.MATCH_PARENT, TableCell.STRING);
@@ -84,6 +88,7 @@ public class NetAppActivity extends Activity {
         //_titles[2] = new TableCell( "报告列表", _width+16, LayoutParams.MATCH_PARENT, TableCell.STRING);
         
         _lv.setVisibility(View.GONE);
+        _lvBtn.setVisibility(View.GONE);
         
         _content.setMovementMethod(LinkMovementMethod.getInstance());
         _info.setMovementMethod(LinkMovementMethod.getInstance());
@@ -108,6 +113,7 @@ public class NetAppActivity extends Activity {
         			_bar.setProgress(100);
         			_bar.setVisibility(View.GONE);
         			_lv.setVisibility(View.GONE);
+        			_lvBtn.setVisibility(View.GONE);
         			_content.setVisibility(View.VISIBLE);
         			_content.append("size: "+_buf.size()+"\n");
         			for (int i=0; i<100 && i<_buf.size(); ++i) {
@@ -123,8 +129,22 @@ public class NetAppActivity extends Activity {
         			_bar.setProgress(100);
         			_bar.setVisibility(View.GONE);
         			_content.setVisibility(View.GONE);
-        			_lv.setVisibility(View.VISIBLE);
-        	        _lv.setAdapter(new TableAdapter(NetAppActivity.this, _tab));
+        			
+        			if ( _tabBtn != null && _tabBtn.size() > 0 ) {
+        				_lvBtn.setVisibility(View.VISIBLE);
+        				_lvBtn.setAdapter(new TableAdapter(NetAppActivity.this, _tabBtn));
+        				_info.append("Button rows: "+_tabBtn.size()+"\n");
+        			} else {
+        				_info.append("no button found!\n");
+        			}
+        			
+        			if ( _tab != null && _tab.size() > 0 ) {
+	        			_lv.setVisibility(View.VISIBLE);
+	        	        _lv.setAdapter(new TableAdapter(NetAppActivity.this, _tab));
+	        	        _info.append("Table rows: "+_tab.size()+"\n");
+        			} else {
+        				_info.append("no table found!\n");
+        			}
         	        //_lv.setOnItemClickListener(new ItemClickEvent());
         	        break;
         		default:
@@ -170,7 +190,9 @@ public class NetAppActivity extends Activity {
             			_info.setText("Posting data ...\n");
             			_content.setText("");
             			_buf.clear();
-            			_tab.clear();
+            			
+            			if ( _tab != null ) _tab.clear();
+            			if ( _tabBtn != null ) _tabBtn.clear();
             			//_tab.add(new TableRow(_titles));
             			
             			_bar.setVisibility(View.VISIBLE);
@@ -274,7 +296,20 @@ public class NetAppActivity extends Activity {
 					HttpGet httpRequest = new HttpGet(_urlapi_login);
 					HttpResponse httpRep = new DefaultHttpClient(httpparam).execute(httpRequest, hcon);
 					
-					_tab = DecodeHtml(EntityUtils.toString(httpRep.getEntity()), _width);
+					String html = EntityUtils.toString(httpRep.getEntity());
+			        Pattern patt_btn = Pattern.compile("<a href=\"([^\"]+)\" class=\"btn ([^\"]+)\".*?>(.*?)</a>");
+			        Matcher mat_btn = patt_btn.matcher(html);
+			        ArrayList<TableCell> trBtn = new ArrayList<TableCell>();
+			        while ( mat_btn.find() ) {
+			        	trBtn.add(new TableCell(mat_btn.group(3), _width, LayoutParams.MATCH_PARENT, TableCell.BUTTON, 
+                				"http://www.365check.net"+mat_btn.group(1)));
+			        }
+			        if ( trBtn.size() > 0 ) {
+			        	_tabBtn = new ArrayList<TableRow>();
+			        	_tabBtn.add(new TableRow(trBtn));
+			        }
+			        
+					_tab = DecodeHtml(html, _width);
 					
 					//TableCell[] cells = new TableCell[3];
 			        //cells[0] = new TableCell( "1", _width, LayoutParams.MATCH_PARENT, TableCell.STRING);
@@ -307,8 +342,7 @@ public class NetAppActivity extends Activity {
     }
     
     public static ArrayList<TableRow> DecodeHtml(String html, int width) {  
-        ArrayList<ArrayList<TableCell>> tab = new ArrayList<ArrayList<TableCell>>();
-        ArrayList<TableRow> rowTab = new ArrayList<TableRow>();
+        ArrayList<TableRow> rowTab = null; // = new ArrayList<TableRow>();
         
         //this._html = html;
         String reg_title = "<table [^<>]*>(.+?)</table>";
@@ -321,6 +355,7 @@ public class NetAppActivity extends Activity {
         }
         
         if( ! rawtab.isEmpty() ) {
+            ArrayList<ArrayList<TableCell>> tab = new ArrayList<ArrayList<TableCell>>();
         	String reg = "<tr>(.+?)</tr>";
         	int max_col = 0;
         	
@@ -384,6 +419,7 @@ public class NetAppActivity extends Activity {
                 }
         	}
         	
+        	if ( tab.size() > 0 ) rowTab = new ArrayList<TableRow>();
         	
         	for ( int i=0; i<tab.size(); ++i ) {
         		ArrayList<TableCell> tr = tab.get(i);
