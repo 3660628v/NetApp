@@ -81,6 +81,18 @@ public class TableAdapter extends BaseAdapter {
                 	btncell.setOnClickListener(new TableButtonListener(context, 
                 			String.valueOf(tableCell.link)));
                 	addView(btncell, layoutParams);
+                } else if (tableCell.type == TableCell.BTN_NEW) {
+                	Button btncell = new Button(context);
+                	btncell.setText(String.valueOf(tableCell.value));
+                	btncell.setOnClickListener(new TableNewBtnListener(context, 
+                			String.valueOf(tableCell.link)));
+                	addView(btncell, layoutParams);
+                } else if (tableCell.type == TableCell.BTN_EDIT) {
+                	Button btncell = new Button(context);
+                	btncell.setText(String.valueOf(tableCell.value));
+                	btncell.setOnClickListener(new TableEditBtnListener(context, 
+                			String.valueOf(tableCell.link)));
+                	addView(btncell, layoutParams);
                 }
             }  
             this.setBackgroundColor(Color.WHITE);//背景白色，利用空隙来实现边框  
@@ -94,6 +106,11 @@ public class TableAdapter extends BaseAdapter {
         		_context = context;
         		_url = val;
         	}
+        	
+        	public Class<?> getIntentClass() {
+        		return NetAppActivity.class;
+        	}
+        	
         	public void onClick(View v) {
         		Toast.makeText(_context, _url, Toast.LENGTH_SHORT).show();
         		Bundle sess_data = new Bundle();
@@ -102,10 +119,30 @@ public class TableAdapter extends BaseAdapter {
     			sess_data.putString("csrf", ((NetAppActivity)context)._csrf);
 				sess_data.putString("useragent", ((NetAppActivity)context)._useragent);
     			sess_data.putString("url", _url);
-    			Intent yunjianIntent = new Intent(_context, NetAppActivity.class);
+    			Intent yunjianIntent = new Intent(_context, getIntentClass());
     			yunjianIntent.putExtras(sess_data);
     			
     			_context.startActivity(yunjianIntent);
+        	}
+        }
+        
+        public class TableNewBtnListener extends TableButtonListener {
+        	public TableNewBtnListener(Context con, String val) {
+        		super(con, val);
+        	}
+        	
+        	public Class<?> getIntentClass() {
+        		return NewReportActivity.class;
+        	}
+        }
+        
+        public class TableEditBtnListener extends TableButtonListener {
+        	public TableEditBtnListener(Context con, String val) {
+        		super(con, val);
+        	}
+        	
+        	public Class<?> getIntentClass() {
+        		return NewReportActivity.class;
         	}
         }
     }
@@ -144,6 +181,9 @@ public class TableAdapter extends BaseAdapter {
         static public final int STRING = 0;  
         static public final int IMAGE = 1;
         static public final int BUTTON = 2;
+        static public final int BTN_NEW = 3;
+        static public final int BTN_EDIT = 4;
+        static public final int BTN_DEL = 5;
         public Object value, link;  
         public int width;  
         public int height;

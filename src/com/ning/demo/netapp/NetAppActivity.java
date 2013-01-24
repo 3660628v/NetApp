@@ -47,7 +47,7 @@ import com.ning.demo.netapp.TableAdapter.TableRow;
 
 public class NetAppActivity extends Activity {
 	Handler _h;
-	EditText _etext;
+	//EditText _etext;
 	TextView _content, _info;
 	Button _btn_go, _btn_post;
 	Runnable _dlrun, _dlrun_post;
@@ -161,10 +161,7 @@ public class NetAppActivity extends Activity {
         _btn_go.setOnClickListener(
         	new	Button.OnClickListener() {
         		public void onClick(View v) {
-        			_fetchurl = _etext.getText().toString();
-        			if ( _fetchurl.isEmpty() ) {
-        				_fetchurl = _urlapi_login;
-        			}
+        			_fetchurl = _urlapi_login; //_etext.getText().toString();
         			
         			Pattern patt_http = Pattern.compile("^https?://");
         			if ( ! patt_http.matcher(_fetchurl).find() ) {
@@ -297,12 +294,27 @@ public class NetAppActivity extends Activity {
 					HttpResponse httpRep = new DefaultHttpClient(httpparam).execute(httpRequest, hcon);
 					
 					String html = EntityUtils.toString(httpRep.getEntity());
-			        Pattern patt_btn = Pattern.compile("<a href=\"([^\"]+)\" class=\"btn ([^\"]+)\".*?>(.*?)</a>");
+			        Pattern patt_btn = Pattern.compile("<a href=\"([^\"]+)\" class=\"btn ([^\"]+)\"(.*?)>(.*?)</a>");
 			        Matcher mat_btn = patt_btn.matcher(html);
 			        ArrayList<TableCell> trBtn = new ArrayList<TableCell>();
 			        while ( mat_btn.find() ) {
-			        	trBtn.add(new TableCell(mat_btn.group(3), _width, LayoutParams.MATCH_PARENT, TableCell.BUTTON, 
-                				"http://www.365check.net"+mat_btn.group(1)));
+			        	String path = mat_btn.group(1);
+			        	String property = mat_btn.group(3);
+			        	String title = mat_btn.group(4);
+			        	
+			        	if ( Pattern.matches("new", path) ) {
+			        		trBtn.add(new TableCell(title, _width, LayoutParams.MATCH_PARENT, TableCell.BTN_NEW, 
+			        				"http://www.365check.net"+path));
+			        	} else if ( Pattern.matches("edit", path) ) {
+			        		trBtn.add(new TableCell(title, _width, LayoutParams.MATCH_PARENT, TableCell.BTN_EDIT, 
+			        				"http://www.365check.net"+path));
+			        	} else if ( Pattern.matches("delete", property) ) {
+			        		trBtn.add(new TableCell(title, _width, LayoutParams.MATCH_PARENT, TableCell.BTN_DEL, 
+			        				"http://www.365check.net"+path));
+			        	} else {
+			        		trBtn.add(new TableCell(title, _width, LayoutParams.MATCH_PARENT, TableCell.BUTTON, 
+			        				"http://www.365check.net"+path));
+			        	}
 			        }
 			        if ( trBtn.size() > 0 ) {
 			        	_tabBtn = new ArrayList<TableRow>();
