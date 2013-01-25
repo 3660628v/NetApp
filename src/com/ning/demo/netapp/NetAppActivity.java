@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.EditText;
 import android.widget.Toast;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -302,13 +301,13 @@ public class NetAppActivity extends Activity {
 			        	String property = mat_btn.group(3);
 			        	String title = mat_btn.group(4);
 			        	
-			        	if ( Pattern.matches("new", path) ) {
+			        	if ( Pattern.matches(".*new.*", path) ) {
 			        		trBtn.add(new TableCell(title, _width, LayoutParams.MATCH_PARENT, TableCell.BTN_NEW, 
 			        				"http://www.365check.net"+path));
-			        	} else if ( Pattern.matches("edit", path) ) {
+			        	} else if ( Pattern.matches(".*edit.*", path) ) {
 			        		trBtn.add(new TableCell(title, _width, LayoutParams.MATCH_PARENT, TableCell.BTN_EDIT, 
 			        				"http://www.365check.net"+path));
-			        	} else if ( Pattern.matches("delete", property) ) {
+			        	} else if ( Pattern.matches(".*delete.*", property) ) {
 			        		trBtn.add(new TableCell(title, _width, LayoutParams.MATCH_PARENT, TableCell.BTN_DEL, 
 			        				"http://www.365check.net"+path));
 			        	} else {
