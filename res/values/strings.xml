@@ -6,5 +6,8 @@
     <string name="input_hint">http://google.com</string>
     <string name="btn_go">Get</string>
     <string name="btn_post">Post</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_create_report">CreateReportActivity</string>
 
 </resources>

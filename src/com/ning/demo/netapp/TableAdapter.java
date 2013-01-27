@@ -132,7 +132,7 @@ public class TableAdapter extends BaseAdapter {
         	}
         	
         	public Class<?> getIntentClass() {
-        		return NewReportActivity.class;
+        		return CreateReportActivity.class;
         	}
         }
         

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ning.demo.netapp"
-    android:versionCode="1"
+    android:versionCode="3"
     android:versionName="1.0" >
 
     <uses-sdk
@@ -32,6 +32,10 @@
         <activity
             android:name="com.ning.demo.netapp.NewReportActivity"
             android:label="@string/title_activity_new_report" >
+        </activity>
+        <activity
+            android:name="com.ning.demo.netapp.CreateReportActivity"
+            android:label="@string/title_activity_create_report" >
         </activity>
     </application>
 
