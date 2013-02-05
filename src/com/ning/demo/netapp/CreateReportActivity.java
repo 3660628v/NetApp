@@ -44,8 +44,6 @@ public class CreateReportActivity extends Activity {
 	
 	private String mCommitor, mUserAgent, mNewItemUrl;
 	private String mCookie, mToken;
-	
-	private static final String _cookie_sess = "_check_app_session", _cookie_token = "remember_token";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +55,7 @@ public class CreateReportActivity extends Activity {
 		mBtnCreate = (Button)findViewById(R.id.buttonNew);
 		
 		mListType = new ArrayList<String>();
-		mListType.add("ÊµãËØïÊ®°Êùø");
+		mListType.add("≤‚ ‘ƒ£∞Â");
 		
 		mListPos = new ArrayList<String>();
 		
@@ -85,62 +83,11 @@ public class CreateReportActivity extends Activity {
 		return true;
 	}
 	
-	public class CreateReportTask extends AsyncTask<Void, Void, Boolean> {
-		private String _errmsg;
-		private final String _url_create = "http://www.365check.net/organizations/93/reports.mobile";
-		
-		protected void onPreExecute() {
+	public class CreateReportTask extends GetInfoTask {
+		protected void initPostValues() {
 			mCommitor = mEditCommitor.getText().toString();
 		}
 		
-		@Override
-		protected Boolean doInBackground(Void... params) {
-			// TODO: attempt authentication against a network service.
-			try {
-				HttpPost httpRequest = new HttpPost(_url_create);
-				
-				List<NameValuePair> sess_params = new ArrayList<NameValuePair>();
-				sess_params.add(new BasicNameValuePair("authenticity_token","erCMSeO6hGZvI9YK1jEwoVqZy+DCtquvcTxLsuNjwr0="));
-				sess_params.add(new BasicNameValuePair("report[template_id]","57"));
-				sess_params.add(new BasicNameValuePair("report[location_id]", ""));
-				sess_params.add(new BasicNameValuePair("report[reporter_name]",mCommitor));
-				
-				CookieStore cookies = new BasicCookieStore();
-				BasicClientCookie bc1 = new BasicClientCookie(_cookie_sess, mCookie);
-				bc1.setVersion(0);
-		        bc1.setDomain(".365check.net");
-		        bc1.setPath("/");
-				BasicClientCookie bc2 = new BasicClientCookie(_cookie_token, mToken);
-				bc2.setVersion(0);
-		        bc2.setDomain(".365check.net");
-		        bc2.setPath("/");
-		        cookies.addCookie(bc1);
-		        cookies.addCookie(bc2);
-				HttpContext context = new BasicHttpContext();
-				context.setAttribute(ClientContext.COOKIE_STORE, cookies);
-				
-				HttpParams httpparam = new BasicHttpParams();
-    			HttpProtocolParams.setUserAgent(httpparam, mUserAgent);
-				
-				httpRequest.setEntity(new UrlEncodedFormEntity(sess_params,HTTP.UTF_8));
-				HttpClient httpCli = new DefaultHttpClient(httpparam);
-				httpCli.execute(httpRequest, context);
-				
-				HttpUriRequest curReq = (HttpUriRequest)context.getAttribute(ExecutionContext.HTTP_REQUEST);
-				mNewItemUrl = curReq.getURI().toString();
-				
-				if ( mNewItemUrl.isEmpty() ) {
-					throw new Exception("create new failed!");
-				}
-			} catch ( Exception e ) {
-				_errmsg = "stage 3: "+e.toString();
-				return false;
-			}
-
-			// TODO: register the new account here.
-			return true;
-		}
-
 		@Override
 		protected void onPostExecute(final Boolean success) {
 			//mAuthTask = null;
